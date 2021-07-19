@@ -3,7 +3,7 @@ const MongoClient = mongodb.MongoClient;
 const ObjectID = mongodb.ObjectId;
 
 const connectionURL =
-  "mongodb+srv://todojs:1040jazz@cluster0.xlsfe.mongodb.net/taskapp?retryWrites=true&w=majority";
+  "mongodb+srv://todojs:1040data@cluster0.xlsfe.mongodb.net/taskapp?retryWrites=true&w=majority";
 
 MongoClient.connect(
   connectionURL,
