@@ -8,7 +8,7 @@ router.post("/users", async (req, res) => {
 
   try {
     await user.save();
-    const token = user.generateToken();
+    const token = await user.generateToken();
     res.status(201).send({ user, token });
   } catch (err) {
     res.status(400).send(err);
@@ -18,10 +18,32 @@ router.post("/users", async (req, res) => {
 router.post("/users/login", async (req, res) => {
   try {
     const user = await User.findUserInfo(req.body.email, req.body.password);
-    const token = user.generateToken();
+    const token = await user.generateToken();
     res.send({ user, token });
   } catch (err) {
     res.status(400).send(err);
+  }
+});
+
+router.post("/users/logout", auth, async (req, res) => {
+  try {
+    req.user.tokens = req.user.tokens.filter((token) => {
+      return token.token !== req.token;
+    });
+    await req.user.save();
+    res.send();
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
+
+router.post("/users/logoutAll", auth, async (req, res) => {
+  try {
+    req.user.tokens = [];
+    await req.user.save();
+    res.send();
+  } catch (err) {
+    res.status(500).send(err);
   }
 });
 
@@ -29,14 +51,14 @@ router.get("/users/me", auth, (req, res) => {
   res.send(req.user);
 });
 
-// router.get("/users", async (req, res) => {
-//   try {
-//     const users = await User.find({});
-//     res.send(users);
-//   } catch (err) {
-//     res.status(500).send(err);
-//   }
-// });
+router.get("/users", async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.send(users);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
 
 router.get("/users/:id", async (req, res) => {
   const id = req.params.id;
